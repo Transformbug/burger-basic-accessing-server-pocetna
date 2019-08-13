@@ -18,17 +18,25 @@ const INGREDIENT_PRICES={
 class BurgerBuilder extends Component {
 
     state={
-        ingredients: {
-            salad: 0,
-            bacon: 0,
-            cheese: 0,
-            meat: 0
-            },
+            ingredients: null,
             totalPrice: 4,
             purchasable:false,
             purchasing: false,
-            loading: false
+            loading: false,
+            error: false
         }
+
+    componentDidMount() {
+        axios.get('https://react-my-burger-47b75.firebaseio.com/ingredients.json')
+        .then(response=>{
+        //Ovaj .data je orginalno bio objekt koji je evkvivalnet originalnom ingrediens objekti gori koji nije bio na serveru
+        //Ali je promjenio na firebase serveru tj. database vrijednost za propery meat i svaki put kada load-amo projekt vidimo da je netko stavio meso.
+         this.setState({ingredients: response.data})
+        })
+        .catch(error=>{
+         this.setState({error: true})
+        })
+    }    
    
     updatePurchaseState(ingredients) {
       
@@ -124,30 +132,43 @@ class BurgerBuilder extends Component {
     for(let key in disabledInfo){
         disabledInfo[key]=disabledInfo[key]<=0;
     }
-
-    let orderSummary=   <OrderSummary 
-    ingredients={this.state.ingredients}
-    price={this.state.totalPrice}
-    purchaseCancelled={this.purchaseCancelHandler}
-    purchaseContinued={this.purchaseContinueHandler}/>
+    
+    let orderSummary=null;
+    
+    let burger=this.state.error ?<p>Igrediends can't be loaded...</p>:<Spinner/>
+    if(this.state.ingredients){
+        burger= (
+            <Aux>
+             <Burger 
+            ingredients={this.state.ingredients}
+            />
+            <BuildControls
+            ingredientAdded={this.addIngredientHandler}
+            ingredientRemoved={this.removeIngredientHandler}
+            disabled={disabledInfo}
+            purchasable={this.state.purchasable}
+            ordered={this.purchaseHandler}
+            price={this.state.totalPrice}/>
+            </Aux>
+            )
+            //Ovo doli nema veze sa postvljanjem burgera, samo dijele if steament
+            orderSummary=   <OrderSummary 
+            ingredients={this.state.ingredients}
+            price={this.state.totalPrice}
+            purchaseCancelled={this.purchaseCancelHandler}
+            purchaseContinued={this.purchaseContinueHandler}/> 
+    }
+    
     if(this.state.loading){
         orderSummary=<Spinner/>
     }
+     
         return (
           <Aux>
                <Modal show={this.state.purchasing} modalClosed={this.purchaseCancelHandler} >
                    {orderSummary}
                   </Modal>
-               <Burger 
-               ingredients={this.state.ingredients}
-               />
-               <BuildControls
-               ingredientAdded={this.addIngredientHandler}
-               ingredientRemoved={this.removeIngredientHandler}
-               disabled={disabledInfo}
-               purchasable={this.state.purchasable}
-               ordered={this.purchaseHandler}
-               price={this.state.totalPrice}/>
+                  {burger}
           </Aux>
         );
     }

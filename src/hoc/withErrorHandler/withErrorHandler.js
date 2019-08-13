@@ -14,16 +14,31 @@ const withErrorHandler = (WrappedComponent, axios) => {
             error: null
         }
       
-     componentDidMount() {
-         axios.interceptors.request.use((req)=>{
+     constructor() {
+     //VAŽNO: ovaj withErrorHandler smo testirali na axios.post() i tada nije se nije pojavio ovaj problem radi kojeg smo morali promjniti componentDidMount u Construcotor.
+     //btw. Max je promjenio u ComponentWillMount, to je zastrjelo u međuvrmeneu
+     //Kada samo u BurgerBulder korisiti .get() onda se ovaj ne bi uhvatili error ovim patternom jer je BurgerBuilder child element withErrorHandler i kada ova kompneta
+     //dođe do render() onda će se aktivirati lifecycle hooks BugerBuilder.js. Zato kada stavimo da je ovo construcotr onda se code unutar ovoga ima šansu izvršiti.
+     //Također je unutar BugerBuilder.js zaboravio hendlati error sa .catch metodom gdje je nastao pa se onaj tamo .then aktvirao.   
+         
+      super()
+         this.reqInterceptor=axios.interceptors.request.use((req)=>{
            //Ovo ovdje radimo jer svaki put kada pošaljemo neki http request želimo maknuti error  
              this.setState({error: null})
              return req
          })
-         axios.interceptors.response.use(res=>res, error=>{
+         this.resInterceptor=axios.interceptors.response.use(res=>res, error=>{
             this.setState({error: error})
          })
-     } 
+     }
+     
+     componentWillUnmount() {
+         console.log('withErrorHandler','componentWillUnmout')
+         //Ovi interceptors su noćna mora. Navodno je ovo trebalo stavit jer će nam ovo biti od korisiti kada dodamo routing.Nešto je govorio oko dead interceptors...
+         //Prvo treba saznati kada će se točno ova komponenta Unmontati tj. compnentWillUnmout aktivirati...
+       axios.interceptors.request.eject(this.reqInterceptor)
+       axios.interceptors.response.eject(this.reqInterceptor)
+     }
      
      errorConfirmedHandler=()=>{
         this.setState({error: null})
