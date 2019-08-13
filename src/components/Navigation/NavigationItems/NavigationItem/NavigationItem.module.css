@@ -1,0 +1,52 @@
+.NavigationItem{
+    margin: 10px 0;
+    box-sizing: border-box;
+    display: block;
+    width: 100%;
+}
+
+.NavigationItem a {
+    color: #8F5C2C;
+    text-decoration: none;
+    width: 100%;
+    box-sizing: border-box;
+    display: block;
+}
+
+/*Ova donja active je naša klasa, gornja obična pseudo active klasa*/
+.NavigationItem a:hover,
+.NavigationItem a:active,
+.NavigationItem a.active {
+
+color: #40A4C8;
+}
+
+@media(min-width: 500px){
+    
+    .NavigationItem{
+        margin: 0;
+        display: flex;
+        height: 100%;
+        /*Ovaj width auto je overwrite te width: 100% koje ionake nije mora gore stavit jer je to gori block level element*/
+        width: auto;
+        align-items: center;
+    }
+    
+    .NavigationItem a {
+        color: white;
+        height: 100%;
+        padding: 16px 10px;
+        /*Ova granica će biti nevidljiva, ali će nam služiti za hover navodno*/
+        border-bottom: 4px solid transparent;
+    }
+    
+    /*Ova donja active je naša klasa, gornja obična pseudo active klasa*/
+    .NavigationItem a:hover,
+    .NavigationItem a:active,
+    .NavigationItem a.active {
+    background-color: #8F5C2C;
+    border-bottom: 4px solid #40A4C8;
+    color: white;
+    }
+
+}
