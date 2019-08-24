@@ -27,6 +27,7 @@ class BurgerBuilder extends Component {
         }
 
     componentDidMount() {
+        console.log(' BurgerBuilder.js-this.props',this.props);
         axios.get('https://react-my-burger-47b75.firebaseio.com/ingredients.json')
         .then(response=>{
         //Ovaj .data je orginalno bio objekt koji je evkvivalnet originalnom ingrediens objekti gori koji nije bio na serveru
@@ -94,33 +95,20 @@ class BurgerBuilder extends Component {
 
    purchaseContinueHandler=()=>{
     //    alert('You Continue');
-    this.setState({loading: true})
-    const order={
-       ingredients: this.state.ingredients,
-       price: this.state.totalPrice,
-       customer: {
-           name: 'Max Schwarzmuller',
-           address: {
-             street: 'Teststreet 1',
-             zipCode: '41351',
-             country: 'Germany'
-       },
-       email: 'test@test.com'
-    },
-     deliveryMethod: 'fastest'  
+   
+    //VAŽNO: ovdje prebacujemo vrijednoist iz this.state u komponentu koja uopće nije child ove komponte tako da kada se pokrene ova fn. this.props.history.push()
+    // će aktivirati tu komponetu Checkout.js gdje ćemo imati pregled stanja this.state jer smo to ubacili putem query stringa ovdje. 
+    const queryParams=[];
+    for (let i in this.state.ingredients){
+       queryParams.push(encodeURIComponent(i)+ '=' + encodeURIComponent(this.state.ingredients[i])) 
     }
-    axios.post('/orders.json', order)
-    .then(response=>{
-        console.log(response);
-        //Purchasing false, zato jer želimo zatvorit Modal
-        this.setState({loading: false, purchasing:false})
+    //Ovaj this.state.totalPrice je dodan u lekciji 255 jer je skužio da će trebati i ovaj podatak.
+    queryParams.push('price=' + this.state.totalPrice)
+    const queryString=queryParams.join('&')
+     this.props.history.push({
+       pathname: '/checkout',
+       search: '?' + queryString
     })
-    .catch(error=>{
-     console.log(error);
-     //Naravno i kad dobijemo error želimo da spinner se makne., purchasing:false
-     this.setState({loading: false, purchasing:false})
-    }
-        )
    }
 
   render() {
