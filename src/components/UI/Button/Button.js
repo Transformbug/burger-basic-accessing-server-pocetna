@@ -5,9 +5,10 @@ const Button = (props) => {
  
     return (
         <button 
-        onClick={props.clicked}
-        //Podjetnik da je .join metoda na Array.prototype.join() i da returna string.
+        disabled={props.disabled}
+         //Podjetnik da je .join metoda na Array.prototype.join() i da returna string.
          className={[styles.Button, styles[props.btnType]].join(' ')}
+        onClick={props.clicked}
         > {props.children}</button>
     );
 };

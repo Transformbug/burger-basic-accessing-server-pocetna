@@ -22,7 +22,7 @@ class Checkout extends Component {
     }
     
      componentDidMount() {
-        //VAŽNO: kada kada sam htio stavit ovdje constructor umjesto componentDidMount, nije mi this.props radio jer sam zabora stavit props unutar consturctor (props) i doli super(props).
+        //VAŽNO: kada kada sam htio stavit ovdje constructor umjesto componentDidMount, nije mi this.props radio jer sam zaboravio stavit props unutar consturctor (props) i doli super(props).
          //VAŽNO: ali i tada bi se dogodio error, vidi screenshot 94 unutar react foldera.
          //JAKO VAŽNO:Max je zbunjeno reako da se u konsrukoru postvljat stanje, je, postvlja se sa this.state={a: 'value'}, znači postvlja se inicijalno stanje, ali se ne smije 
          //zvati this.setState() unutar konsrukora, pa čak i na ovakva način gdje ne zovemo this.setState nego imamo funkciju koju ovdje zovemo koja će pozvati this.setState(). 

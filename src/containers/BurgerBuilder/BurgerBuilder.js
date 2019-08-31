@@ -98,6 +98,8 @@ class BurgerBuilder extends Component {
    
     //VAŽNO: ovdje prebacujemo vrijednoist iz this.state u komponentu koja uopće nije child ove komponte tako da kada se pokrene ova fn. this.props.history.push()
     // će aktivirati tu komponetu Checkout.js gdje ćemo imati pregled stanja this.state jer smo to ubacili putem query stringa ovdje. 
+    //VAŽNO: btw. zbog toga što ta komponenta čiji ćemo path aktivirati uopće nije unutar komponete BurgerBuilder nismo mogli korisit ni onu tehniku za prebacivanje
+    // propsa kada je neka kompontea unutar <Route/> 
     const queryParams=[];
     for (let i in this.state.ingredients){
        queryParams.push(encodeURIComponent(i)+ '=' + encodeURIComponent(this.state.ingredients[i])) 
